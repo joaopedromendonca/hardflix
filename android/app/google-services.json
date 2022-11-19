@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "743247101985",
+    "project_id": "hardflix-59e64",
+    "storage_bucket": "hardflix-59e64.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:743247101985:android:2f479f6e93e97cb4c72360",
+        "android_client_info": {
+          "package_name": "com.example.hardflix"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "743247101985-r1oq71b88cpeoipkdmh6jr2jv09p4ms1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA_bILFfvufHtzuQkRzy6NMgj4CKQNLdW0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "743247101985-r1oq71b88cpeoipkdmh6jr2jv09p4ms1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
