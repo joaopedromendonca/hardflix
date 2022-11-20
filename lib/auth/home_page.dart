@@ -4,20 +4,55 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hardflix/auth/film_page.dart';
+import 'package:hardflix/google_sign_in.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:provider/provider.dart';
 
 class Filme {
-  String? nome;
-  String? classificacao;
-  String? anoLancamento;
-  String? genero;
-  String? duracao;
-  String? idioma;
-  String? avaliacao;
+  String nome;
+  Filme({required this.nome});
+  // final String nome;
+  // final String classificacao;
+  // final String anoLancamento;
+  // final String genero;
+  // final String duracao;
+  // final String idioma;
+  // final String avaliacao;
 
-  Filme({
-    required this.nome,
-  });
+  // const Filme(
+  //     {super.key,
+  //     required this.nome,
+  //     required this.classificacao,
+  //     required this.anoLancamento,
+  //     required this.avaliacao,
+  //     required this.duracao,
+  //     required this.genero,
+  //     required this.idioma});
+
+  // @override
+  // Widget build(BuildContext context) {
+  //   CollectionReference filmes =
+  //       FirebaseFirestore.instance.collection('filmes');
+
+  //   return FutureBuilder<DocumentSnapshot>(
+  //     builder: ((context, snapshot) {
+  //       if (snapshot.connectionState == ConnectionState.done) {
+  //         Map<String, dynamic> data =
+  //             snapshot.data!.data() as Map<String, dynamic>;
+  //         return Filme(
+  //           nome: data['nome'],
+  //           classificacao: data['classificacao'],
+  //           anoLancamento: data['anoLancamento'],
+  //           avaliacao: data['avaliacao'],
+  //           duracao: data['duracao'],
+  //           genero: data['genero'],
+  //           idioma: data['idioma'],
+  //         );
+  //       }
+  //       return const Text('Carregando dados...');
+  //     }),
+  //   );
+  // }
 }
 
 class HomePage extends StatefulWidget {
@@ -30,11 +65,22 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final _formKey = GlobalKey<FormState>();
   final _editFormKey = GlobalKey<FormState>();
-  List<Filme> tarefas = [];
+  List<Filme> filmes = [];
   final _nomeController = TextEditingController();
+  final _classController = TextEditingController();
+  final _anoController = TextEditingController();
+  final _avController = TextEditingController();
+  final _durController = TextEditingController();
+  final _genController = TextEditingController();
+  final _idiController = TextEditingController();
   final user = FirebaseAuth.instance.currentUser!;
 
   List<String> docIDs = [];
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   Future getDocIDs() async {
     await FirebaseFirestore.instance.collection('usuarios').get().then(
@@ -44,13 +90,6 @@ class _HomePageState extends State<HomePage> {
             },
           ),
         );
-  }
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    getDocIDs();
-    super.initState();
   }
 
   @override
@@ -82,27 +121,32 @@ class _HomePageState extends State<HomePage> {
                   insetPadding: EdgeInsets.all(50),
                   content: Form(
                     key: _formKey,
-                    child: TextFormField(
-                      showCursor: true,
-                      autofocus: true,
-                      controller: _nomeController,
-                      validator: (nome) {
-                        if (nome == null || nome.isEmpty) {
-                          return "Este campo é obrigatório.";
-                        }
-                        return null;
-                      },
-                      decoration: InputDecoration(
-                        hintText: "Insira o nome da tarefa",
-                        border: InputBorder.none,
-                      ),
-                      onFieldSubmitted: (nome) => setState(() {
-                        if (_formKey.currentState!.validate()) {
-                          Navigator.of(context).pop();
-                          _nomeController.clear();
-                          return tarefas.add(Filme(nome: nome));
-                        }
-                      }),
+                    child: Column(
+                      children: [
+                        TextFormField(
+                          showCursor: true,
+                          autofocus: true,
+                          controller: _nomeController,
+                          validator: (nome) {
+                            if (nome == null || nome.isEmpty) {
+                              return "Este campo é obrigatório.";
+                            }
+                            return null;
+                          },
+                          decoration: InputDecoration(
+                            hintText: "Insira o nome do filme",
+                            border: InputBorder.none,
+                          ),
+                          onFieldSubmitted: (nome) => setState(() {
+                            if (_formKey.currentState!.validate()) {
+                              Navigator.of(context).pop();
+                              _nomeController.clear();
+                              return filmes.add(Filme(nome: nome));
+                            }
+                          }),
+                        ),
+                        TextFormField()
+                      ],
                     ),
                   ),
                 ),
@@ -113,22 +157,27 @@ class _HomePageState extends State<HomePage> {
       ),
       body: SafeArea(
         child: backGround(
-          ReorderableListView.builder(
-            proxyDecorator: proxyDecorator,
-            itemCount: tarefas.length,
-            itemBuilder: (BuildContext context, int index) {
-              final tarefa = tarefas[index];
-              return buildCard(index, tarefa);
-            },
-            padding: const EdgeInsets.all(8),
-            onReorder: (int oldIndex, int newIndex) {
-              if (newIndex > oldIndex) newIndex--;
-              setState(() {
-                var tarefa = tarefas[oldIndex];
-                tarefas.removeAt(oldIndex);
-                tarefas.insert(newIndex, tarefa);
-              });
-            },
+          FutureBuilder(
+            future: getDocIDs(),
+            builder: ((context, snapshot) {
+              return ReorderableListView.builder(
+                proxyDecorator: proxyDecorator,
+                itemCount: filmes.length,
+                itemBuilder: (BuildContext context, int index) {
+                  final filme = filmes[index];
+                  return buildCard(index, filme);
+                },
+                padding: const EdgeInsets.all(8),
+                onReorder: (int oldIndex, int newIndex) {
+                  if (newIndex > oldIndex) newIndex--;
+                  setState(() {
+                    var tarefa = filmes[oldIndex];
+                    filmes.removeAt(oldIndex);
+                    filmes.insert(newIndex, tarefa);
+                  });
+                },
+              );
+            }),
           ),
         ),
       ),
@@ -144,7 +193,7 @@ class _HomePageState extends State<HomePage> {
         title: Padding(
           padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
           child: Text(
-            filme.nome!,
+            filme.nome,
             style: TextStyle(fontWeight: FontWeight.w600),
           ),
         ),
@@ -194,7 +243,7 @@ class _HomePageState extends State<HomePage> {
   void editar(int index) => showDialog(
         context: context,
         builder: ((context) {
-          final tarefa = tarefas[index];
+          final tarefa = filmes[index];
           return AlertDialog(
             content: Form(
               key: _editFormKey,
@@ -220,7 +269,7 @@ class _HomePageState extends State<HomePage> {
       );
 
   void deletar(int index) => setState(() {
-        tarefas.removeAt(index);
+        filmes.removeAt(index);
       });
 
   Widget backGround(Widget child) {

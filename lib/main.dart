@@ -2,7 +2,10 @@
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get_navigation/src/root/get_material_app.dart';
+import 'package:hardflix/google_sign_in.dart';
 import 'package:hardflix/main_page.dart';
+import 'package:provider/provider.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,35 +21,38 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // ignore: prefer_const_constructors
-    return MaterialApp(
-      title: 'HardFlix',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        appBarTheme: AppBarTheme(
+    return ChangeNotifierProvider(
+      create: (context) => GoogleSignInProvider(),
+      child: GetMaterialApp(
+        title: 'HardFlix',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          appBarTheme: AppBarTheme(
+            backgroundColor: lightBlueColor,
+          ),
           backgroundColor: lightBlueColor,
+          scaffoldBackgroundColor: lightBlueColor,
+          cardTheme: CardTheme(
+            color: mediumBlueColor,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+          ),
+          listTileTheme: ListTileThemeData(
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+            tileColor: mediumBlueColor,
+          ),
+          dialogTheme: DialogTheme(
+            backgroundColor: mediumBlueColor,
+          ),
+          textSelectionTheme: TextSelectionThemeData(
+            selectionColor: Color.fromARGB(255, 6, 219, 202),
+            cursorColor: Color.fromARGB(255, 0, 40, 114),
+          ),
+          primarySwatch: Colors.lightBlue,
         ),
-        backgroundColor: lightBlueColor,
-        scaffoldBackgroundColor: lightBlueColor,
-        cardTheme: CardTheme(
-          color: mediumBlueColor,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-        ),
-        listTileTheme: ListTileThemeData(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
-          tileColor: mediumBlueColor,
-        ),
-        dialogTheme: DialogTheme(
-          backgroundColor: mediumBlueColor,
-        ),
-        textSelectionTheme: TextSelectionThemeData(
-          selectionColor: Color.fromARGB(255, 6, 219, 202),
-          cursorColor: Color.fromARGB(255, 0, 40, 114),
-        ),
-        primarySwatch: Colors.lightBlue,
+        home: MainPage(),
       ),
-      home: MainPage(),
     );
   }
 }
